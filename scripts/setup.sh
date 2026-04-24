@@ -113,10 +113,13 @@ cp "${REPO_DIR}/config/cron/jobs.json" ~/.openclaw/cron/jobs.json
 log "OpenClaw configuration deployed to ~/.openclaw/"
 
 # -----------------------------------------------------------------------------
-# 7. Pull the Docker sandbox image
+# 7. Build the Docker sandbox image
 # -----------------------------------------------------------------------------
-log "Pulling Docker sandbox image (node:24-alpine)..."
-docker pull node:24-alpine
+log "Building Docker sandbox image (fingent-sandbox:latest)..."
+docker build \
+  -t fingent-sandbox:latest \
+  -f "${REPO_DIR}/docker/Dockerfile" \
+  "${REPO_DIR}/docker"
 log "Docker sandbox image ready."
 
 # -----------------------------------------------------------------------------
@@ -161,7 +164,8 @@ echo " OpenClaw:  deployed to ${HOME}/.openclaw/"
 echo ""
 echo " Next steps:"
 echo "  1. Copy .env.example to .env and fill in secrets"
-echo "  2. Run: bash scripts/generate-data.sh"
-echo "  3. Start the gateway: sudo systemctl start openclaw"
-echo "  4. Verify: openclaw status"
+echo "  2. Run: make validate"
+echo "  3. Run: bash scripts/generate-data.sh"
+echo "  4. Start the gateway: sudo systemctl start openclaw"
+echo "  5. Verify: openclaw status"
 echo "============================================================"

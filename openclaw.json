@@ -9,7 +9,7 @@
     "defaults": {
       "sandbox": {
         "mode": "docker",
-        "image": "node:24-alpine",
+        "image": "fingent-sandbox:latest",
         "ephemeral": true,
         "network": "none"
       },

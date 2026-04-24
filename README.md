@@ -20,7 +20,9 @@ fingent/
 │       └── SKILL.md                 # Month-End Reconciliation skill definition
 ├── scripts/
 │   ├── setup.sh                     # VPS provisioning & dependency installation
-│   └── generate-data.sh             # DataSynth synthetic data generation
+│   ├── generate-data.sh             # DataSynth synthetic data generation
+│   └── validate.sh                  # Repo-native validation checks
+├── Makefile                         # Common validate/build/setup commands
 ├── docker/
 │   ├── Dockerfile                   # Ephemeral sandbox container image
 │   └── requirements-sandbox.txt     # Python deps for sandbox
@@ -50,8 +52,9 @@ fingent/
 │  │          │ tool calls               │ tool calls          │  │
 │  │          ▼                          ▼                      │  │
 │  │  ┌──────────────────────────────────────────────────┐     │  │
-│  │  │     Docker Sandbox  (ephemeral, --network=none)  │     │  │
-│  │  │  node:24-alpine + pdfplumber + jsonschema        │     │  │
+│  │  │ Docker Sandbox (ephemeral, --network=none)       │     │  │
+│  │  │ fingent-sandbox:latest                           │     │  │
+│  │  │ built from node:24-alpine + finance deps         │     │  │
 │  │  └──────────────────────────────────────────────────┘     │  │
 │  │                                                            │  │
 │  │  HITL Approval Gate ──► Supervisor Webhook                 │  │
@@ -81,12 +84,17 @@ cd fingent
 bash scripts/setup.sh
 ```
 
-This installs Node.js 24, Docker, OpenClaw (globally via npm), DataSynth, and registers OpenClaw as a `systemd` service.
+This installs Node.js 24, Docker, OpenClaw (globally via npm), DataSynth, builds the hardened `fingent-sandbox:latest` image, and registers OpenClaw as a `systemd` service.
 
 ### Step 2 — Configure environment variables
 ```bash
 cp .env.example .env
 # Edit .env and fill in APPROVAL_WEBHOOK_URL, WEBHOOK_SECRET, etc.
+```
+
+If you want the gateway reachable over a secure Tailscale interface instead of loopback, set:
+```bash
+OPENCLAW_BIND_ADDRESS=100.x.y.z
 ```
 
 ### Step 3 — Generate synthetic financial data
@@ -168,9 +176,21 @@ Cron jobs are defined in `config/cron/jobs.json` and deployed to `~/.openclaw/cr
 
 ## 6. Development
 
+### Validate the repo
+```bash
+make validate
+```
+
+This checks:
+- shell script syntax
+- JSON config validity
+- OpenClaw skill/cron linkage
+- required runtime directories
+- Docker sandbox file references
+
 ### Build the sandbox Docker image
 ```bash
-docker build -t fingent-sandbox:latest -f docker/Dockerfile docker/
+make build-sandbox
 ```
 
 ### Run a skill manually
