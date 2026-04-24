@@ -1,0 +1,6 @@
+# Python dependencies for the finance sandbox container
+# Installed inside the Docker sandbox image; keep minimal for fast startup
+
+pdfplumber==0.11.4      # PDF text/table extraction for invoice intake
+python-dateutil==2.9.0  # Flexible date parsing for invoice dates
+jsonschema==4.23.0      # JSON schema validation for extracted invoice data

@@ -1,0 +1,46 @@
+{
+  "version": "1.0",
+  "gateway": {
+    "bind": "127.0.0.1",
+    "port": 3000
+  },
+  "dmPolicy": "pairing",
+  "agents": {
+    "defaults": {
+      "sandbox": {
+        "mode": "docker",
+        "image": "fingent-sandbox:latest",
+        "ephemeral": true,
+        "network": "none"
+      },
+      "model": "claude-sonnet-4-5"
+    }
+  },
+  "approvals": {
+    "outbound": {
+      "enabled": true,
+      "mode": "targets",
+      "tools": ["message", "exec"]
+    }
+  },
+  "skills": [
+    "./skills/ap-invoice-pipeline/SKILL.md",
+    "./skills/monthly-close/SKILL.md"
+  ],
+  "webhooks": {
+    "approval": {
+      "enabled": true,
+      "url": "${APPROVAL_WEBHOOK_URL}",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer ${WEBHOOK_SECRET}"
+      }
+    }
+  },
+  "logging": {
+    "level": "info",
+    "file": "./logs/openclaw.log",
+    "auditFile": "./logs/audit.log"
+  }
+}

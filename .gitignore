@@ -1,0 +1,25 @@
+# .gitignore — Finance Automation Sandbox
+# =============================================================================
+
+# Environment secrets — never commit
+.env
+
+# Runtime data directories — generated at runtime, not source-controlled
+/inbox/invoices/*.pdf
+/archive/
+/processing/*.json
+/reports/
+/logs/*.log
+/logs/audit.log
+/data/
+
+# Keep directory placeholders
+!**/.gitkeep
+
+# Node.js
+node_modules/
+npm-debug.log*
+
+# OS artefacts
+.DS_Store
+Thumbs.db
